@@ -1,0 +1,144 @@
+// while (rayc.map[y])
+//     {
+//         x = 0;
+//         while (rayc.map[y][x])
+//         {
+//             if (rayc.map[y][x] == '1')
+//             {
+//                 b = 0;
+//                 while (b < 50)
+//                 {
+//                     while (a < 50)
+//                     {
+//                         printf("pixel num : %d - %d\n", (x * 50) + a, (y * 50) + b);
+//                         mlx_pixel_put(rayc.ptr, rayc.window, x * 50 + a, y * 50 + b, 0xFF0000);
+//                         a++;
+//                     }
+//                     a = 0;
+//                     b++;
+//                 }
+//             }
+//             else if (rayc.map[y][x] == '0')
+//             {
+//                 printf("hello\n");
+//                 b = 0;
+//                 while (b < 50)
+//                 {
+//                     while (a < 50)
+//                     {
+//                         printf("pixel num : %d - %d\n", (x * 50) + a, (y * 50) + b);
+//                         mlx_pixel_put(rayc.ptr, rayc.window, x * 50 + a, y * 50 + b, 0x0000ff);
+//                         a++;
+//                     }
+//                     a = 0;
+//                     b++;
+//                 }  
+//             }
+//             x++;
+//         }
+//         y++;
+//     }
+            // if ((int)y_inc == iy)
+        // {
+        //     printf("hello from iy ====>%d and y_inc===>%f and the y ===>%d\n", iy, y_inc, y);
+        //     if (y < y_sin)
+        //     {
+        //         y++;
+        //         mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + x,
+        //             rayc->pp_y + y, 0x0000FF00);
+        //     }
+        //     else if (y > y_sin)
+        //     {
+        //         y--;
+        //         mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + x,
+        //             rayc->pp_y + y, 0x0000FF00);
+        //     }
+        //     if ((int)y_inc > 0)
+        //         iy++;
+        //     else
+        //         iy--;
+        // }
+        // if ((int)x_inc == ix)
+        // {
+        //     if (x < x_cos)
+        //     {
+        //         x++;
+        //         mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + x,
+        //             rayc->pp_y + y, 0x0000FF00);
+        //     }
+        //     else if (x > x_cos)
+        //     {
+        //         x--;
+        //         mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + x,
+        //             rayc->pp_y + y, 0x0000FF00);
+        //     }
+        //     if ((int)x_inc > 0)
+        //         ix++;
+        //     else
+        //         ix--;
+        // }
+    //         x = 0;
+    // y = 0;
+    // rayc->angel_in_radian = rayc->angel * (3.141593 / 180);
+    // x_cos = cos(rayc->angel_in_radian) * 50;
+    // y_sin = sin(rayc->angel_in_radian) * 50;
+    // mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + x_cos,
+    //     rayc->pp_y + y_sin, 0x0000FF00);
+    // double dx = x_cos;
+    // double dy = y_sin;
+    // printf("ysin%f    xsin%f\n", dy, dx);
+    // float step;
+    // if (abs(dx) > abs(dy))
+    //     step = dx;
+    // else
+    //     step = dy;
+    // float x_inc = dx / step;
+    // float y_inc = dy / step;
+    // if (y_sin == 0.0000 || x_cos == 0.0000)
+    // {
+    //     printf("hell\n");
+    //     while ((int)y_inc != y_sin || (int)x_inc != x_cos)
+    //     {
+    //         mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + (int)x_inc,
+    //             rayc->pp_y + (int)y_inc, 0x0000FF00);
+    //         y_inc += dy / step;
+    //         x_inc += dx / step;
+    //         printf("hello from here y_inc ====>%f and ysin===>%f\n", y_inc, y_sin);
+    //         printf("hello from here x_inc ====>%f and xcos===>%f\n", x_inc, x_cos);
+    //         if (y_inc < -50 || y_inc > 50)
+    //             break;
+    //     }
+    // }
+    // else
+    // {
+    //     printf("hello\n");
+    //     while ((int)y_inc != y_sin && (int)x_inc != x_cos)
+    //     {
+    //         mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + (int)x_inc,
+    //             rayc->pp_y + (int)y_inc, 0x0000FF00);
+    //         printf("hello from here y_inc ====>%f and ysin===>%f\n", y_inc, y_sin);
+    //         printf("hello from here x_inc ====>%f and xcos===>%f\n", x_inc, x_cos);
+    //         y_inc += dy / step;
+    //         x_inc += dx / step;
+    //         if (y_inc < -50 || y_inc > 50 || x_inc < -50 || x_inc > 50) 
+    //             break;
+    //     }    
+    // }
+
+    // while (y <= 1)
+    // {
+    //     while (x <= 1)
+    //     {
+    //         if (rayc->map[(rayc->pp_y / 50) + y][(rayc->pp_x / 50) + x] != '\0' &&
+    //             rayc->map[(rayc->pp_y / 50) + y][(rayc->pp_x / 50) + x] == '0')
+    //             mlx_put_image_to_window(rayc->ptr, rayc->window, rayc->floor,
+    //                 ((rayc->pp_x / 50) + x) * 50, ((rayc->pp_y / 50) + y) * 50);
+    //         else if (rayc->map[(rayc->pp_y / 50) + y][(rayc->pp_x / 50) + x] != '\0' &&
+    //                 rayc->map[(rayc->pp_y / 50) + y][(rayc->pp_x / 50) + x] == '1')
+    //             mlx_put_image_to_window(rayc->ptr, rayc->window, rayc->img,
+    //                 ((rayc->pp_x / 50) + x) * 50, ((rayc->pp_y / 50) + y) * 50);
+    //         x++;
+    //     }
+    //     x = -1;
+    //     y++;
+    // }
