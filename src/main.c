@@ -45,8 +45,6 @@ void    draw_rays(t_rayc *rayc)
     }
 }
 
-
-
 void    draw_img_line(t_rayc *rayc)
 {
     int x = 50;
@@ -147,65 +145,78 @@ int player(int event, t_rayc *rayc)
     int x = 0;
     if (event == 119)
     {
-        if (rayc->map[(rayc->pp_y + 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y - 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x + 4)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x - 4)/ 50] == '0')
+        rayc->x_cos[30] = cos(rayc->angel_in_radian[30]) * 3;
+        rayc->y_sin[30] = sin(rayc->angel_in_radian[30]) * 3;
+        rayc->pp_x += (int)rayc->x_cos[30];
+        rayc->pp_y += (int)rayc->y_sin[30];
+        if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[30]) / 50]
+            [(rayc->pp_x + (int)rayc->x_cos[30])/ 50] == '0')
         {
-            rayc->x_cos[30] = cos(rayc->angel_in_radian[30]) * 3;
-            rayc->y_sin[30] = sin(rayc->angel_in_radian[30]) * 3;
-            rayc->pp_x += (int)rayc->x_cos[30];
-            rayc->pp_y += (int)rayc->y_sin[30];
             draw_player(rayc);
             draw_rays(rayc);
         }
+        else
+        {
+            rayc->pp_x -= (int)rayc->x_cos[30];
+            rayc->pp_y -= (int)rayc->y_sin[30];
+        }
+
     }
     else if (event == 115)
     {
-        if (rayc->map[(rayc->pp_y + 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y - 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x + 4)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x - 4)/ 50] == '0')
+        rayc->x_cos[30] = cos(rayc->angel_in_radian[30]) * 3;
+        rayc->y_sin[30] = sin(rayc->angel_in_radian[30]) * 3;
+        rayc->pp_x -= (int)rayc->x_cos[30];
+        rayc->pp_y -= (int)rayc->y_sin[30];
+        if (rayc->map[(rayc->pp_y - (int)rayc->y_sin[30]) / 50]
+            [(rayc->pp_x - (int)rayc->x_cos[30])/ 50] == '0')
         {
-            rayc->x_cos[30] = cos(rayc->angel_in_radian[30]) * 3;
-            rayc->y_sin[30] = sin(rayc->angel_in_radian[30]) * 3;
-            rayc->pp_x -= (int)rayc->x_cos[30];
-            rayc->pp_y -= (int)rayc->y_sin[30];
             draw_player(rayc);
             draw_rays(rayc);
+        }
+        else
+        {
+            rayc->pp_x += (int)rayc->x_cos[30];
+            rayc->pp_y += (int)rayc->y_sin[30];
         }
     
     }
     else if (event == 100)
     {
-        if (rayc->map[(rayc->pp_y + 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y - 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x + 4)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x - 4)/ 50] == '0')
+        rayc->angel_in_radian[30] = (rayc->angel[30] + 90) * (3.141593 / 180);
+        rayc->x_cos[30] = cos(rayc->angel_in_radian[30]) * 3;
+        rayc->y_sin[30] = sin(rayc->angel_in_radian[30]) * 3;
+        rayc->pp_x += (int)rayc->x_cos[30];
+        rayc->pp_y += (int)rayc->y_sin[30];
+        if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[30]) / 50]
+            [(rayc->pp_x + (int)rayc->x_cos[30])/ 50] == '0')
         {
-            rayc->angel_in_radian[30] = (rayc->angel[30] + 90) * (3.141593 / 180);
-            rayc->x_cos[30] = cos(rayc->angel_in_radian[30]) * 3;
-            rayc->y_sin[30] = sin(rayc->angel_in_radian[30]) * 3;
-            rayc->pp_x += (int)rayc->x_cos[30];
-            rayc->pp_y += (int)rayc->y_sin[30];
             draw_player(rayc);
             draw_rays(rayc);
+        }
+        else
+        {
+            rayc->pp_x -= (int)rayc->x_cos[30];
+            rayc->pp_y -= (int)rayc->y_sin[30];
         }
     }
     else if (event == 97)
     {
-    if (rayc->map[(rayc->pp_y + 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y - 4) / 50][(rayc->pp_x)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x + 4)/ 50] == '0'
-            && rayc->map[(rayc->pp_y) / 50][(rayc->pp_x - 4)/ 50] == '0')
-        {
             rayc->angel_in_radian[30] = (rayc->angel[30] - 90) * (3.141593 / 180);
             rayc->x_cos[30] = cos(rayc->angel_in_radian[30]) * 3;
             rayc->y_sin[30] = sin(rayc->angel_in_radian[30]) * 3;
             rayc->pp_x += (int)rayc->x_cos[30];
             rayc->pp_y += (int)rayc->y_sin[30];
+        if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[30]) / 50]
+            [(rayc->pp_x + (int)rayc->x_cos[30])/ 50] == '0')
+        {
             draw_player(rayc);
             draw_rays(rayc); 
+        }
+        else
+        {
+            rayc->pp_x -= (int)rayc->x_cos[30];
+            rayc->pp_y -= (int)rayc->y_sin[30];
         }
     }
     else if (event == 65363)
