@@ -13,17 +13,20 @@ typedef struct rayc
     void    *floor;
     int     colom;
     void    *ptr;
+    void    *newptr;
+    // void    
     void    *img;
+    void    *new_window;
     void    *window;
     int     pp_x;
     int     pp_y;
-    double  angel[60];
-    double  angel_in_radian[60];
-    double x_inc[60], y_inc[60];
-    double steps[60];
-    double x_cos[60], y_sin[60];
-    double dx[60], dy[60];
-    int     ray[60];
+    double  angel[320];
+    double  angel_in_radian[320];
+    double x_inc[320], y_inc[320];
+    double steps[320];
+    double x_cos[320], y_sin[320];
+    double dx[320], dy[320];
+    int     ray[320];
 } t_rayc;
 
 
