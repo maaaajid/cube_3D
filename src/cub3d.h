@@ -20,13 +20,13 @@ typedef struct rayc
     void    *window;
     int     pp_x;
     int     pp_y;
-    double  angel[120];
-    double  angel_in_radian[120];
-    double x_inc[120], y_inc[120];
-    double steps[120];
-    double x_cos[120], y_sin[120];
-    double dx[120], dy[120];
-    int     ray[120];
+    double  angel[320];
+    double  angel_in_radian[320];
+    double x_inc[320], y_inc[320];
+    double steps[320];
+    double x_cos[320], y_sin[320];
+    double dx[320], dy[320];
+    int     ray[320];
 } t_rayc;
 
 typedef struct	s_data {
