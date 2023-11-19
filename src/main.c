@@ -9,25 +9,9 @@ void	my_mlx_pixel_put(t_data *data, int y, int x, int color)
 	*(unsigned int*)dst = color;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void    the_casting(t_rayc *rayc)
 {
+    int color;
     int x = 0;
     int i;
     double wall;
@@ -43,16 +27,20 @@ void    the_casting(t_rayc *rayc)
         y = x * colom;
         while (y < x * colom + colom)
         {
-            wall = ((double)50 / (double)rayc->ray[x]) * 255;
+            wall = ((double)50 / (double)rayc->ray[x]) * (double)255;
+            // printf("wall==%f\n", wall);
+            if (wall > 600)
+                wall = 600;
+            if (rayc->dir[x] == 'W' || rayc->dir[x] == 'E')
+                color = 0x009900;
+            else
+                color = 0x0000FF00;
             i = 300 - (wall / 2);
-            // printf("WALL%f\n", wall);
             while (inc < (int)wall)
             {
-                my_mlx_pixel_put(&img, inc + i, y, 0x0000FF00);
+                my_mlx_pixel_put(&img, inc + i, y, color);
                 inc++;
             }
-            // printf("%d\n", inc + i);
-            // exit(1);
             while (inc + i < 600)
             {
                 my_mlx_pixel_put(&img, inc + i, y, 0x808080);
@@ -60,36 +48,12 @@ void    the_casting(t_rayc *rayc)
             }
             y++;
             inc = 0;
-            // printf("y%d    x%d\n", y, x * colom + colom);
         }
         x++;
     }
-    // printf("x == %d\n", x);
     if (x == 320)
         mlx_put_image_to_window(rayc->ptr, rayc->window, img.img, 0, 0);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void    draw_rays(t_rayc *rayc)
 {
@@ -120,13 +84,26 @@ void    draw_rays(t_rayc *rayc)
         {
             // mlx_pixel_put(rayc->ptr, rayc->window, rayc->pp_x + (int)rayc->x_inc[x],
             //     rayc->pp_y + (int)rayc->y_inc[x], 0x0000FF00);
+            rayc->pre_inc_x[x] = rayc->x_inc[x];
+            rayc->pre_inc_y[x] = rayc->y_inc[x];
             rayc->y_inc[x] += rayc->dy[x] / rayc->steps[x];
             rayc->x_inc[x] += rayc->dx[x] / rayc->steps[x];
             rayc->ray[x]++;
             if (rayc->map[(rayc->pp_y + (int)rayc->y_inc[x]) / 50]
                 [(rayc->pp_x + (int)rayc->x_inc[x]) / 50] == '1')
             {
-                // printf("ray%d\n", rayc->ray[x]);
+                if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x] + 1) / 50]
+                    [(rayc->pp_x + (int)rayc->pre_inc_x[x]) / 50] == '1')
+                    rayc->dir[x] = 'S';
+                else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x] - 1) / 50]
+                    [(rayc->pp_x + (int)rayc->pre_inc_x[x]) / 50] == '1')
+                    rayc->dir[x] = 'N';
+                else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x]) / 50]
+                    [(rayc->pp_x + (int)rayc->pre_inc_x[x] + 1) / 50] == '1')
+                    rayc->dir[x] = 'E';
+                else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x]) / 50]
+                    [(rayc->pp_x + (int)rayc->pre_inc_x[x] - 1) / 50] == '1')
+                    rayc->dir[x] = 'W';
                 break;
             }
         } 
@@ -135,10 +112,10 @@ void    draw_rays(t_rayc *rayc)
     the_casting(rayc);
     while (x)
     {
-        rayc->ray[x] = 0;
+        rayc->ray[x - 1] = 0;
         x--;
     }
-    // printf("======================\n=========================\n");
+    printf("======================\n=========================\n");
 }
 
 void    draw_img_line(t_rayc *rayc)
