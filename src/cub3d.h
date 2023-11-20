@@ -19,6 +19,8 @@ typedef struct rayc
     void    *window;
     int     pp_x;
     int     pp_y;
+    int     wallx;
+    int     wally;
     double  angel[320];
     char    dir[320];
     double  pre_inc_x[320];

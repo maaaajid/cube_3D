@@ -1,6 +1,11 @@
 
 #include"cub3d.h"
 
+double    distance(double x1, double y1, double x2, double y2)
+{
+    return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
+}
+
 void	my_mlx_pixel_put(t_data *data, int y, int x, int color)
 {
 	char	*dst;
@@ -14,6 +19,7 @@ void    the_casting(t_rayc *rayc)
     int color;
     int x = 0;
     int i;
+    double tan;
     double wall;
     int colom = 1280 / 320;
     int inc = 0;
@@ -24,11 +30,13 @@ void    the_casting(t_rayc *rayc)
                             &img.line_length, &img.endian);
     while (x < 320)
     {
+        printf("ray%f\n", rayc->ray[x]);
         y = x * colom;
         while (y < x * colom + colom)
         {
-            wall = ((double)50 / (double)rayc->ray[x]) * (double)255;
-            // printf("wall==%f\n", wall);
+            tan = 
+            wall = ((double)50 / rayc->ray[x]) * (double)600;
+            // printf("ray==%f\n", );
             if (wall > 600)
                 wall = 600;
             if (rayc->dir[x] == 'W' || rayc->dir[x] == 'E')
@@ -61,8 +69,8 @@ void    draw_rays(t_rayc *rayc)
     while (x < 320)
     {
         rayc->angel_in_radian[x] = rayc->angel[x] * (3.141593 / 180);
-        rayc->x_cos[x] = cos(rayc->angel_in_radian[x]) * 1000;
-        rayc->y_sin[x] = sin(rayc->angel_in_radian[x]) * 1000;
+        rayc->x_cos[x] = cos(rayc->angel_in_radian[x]) * 2000;
+        rayc->y_sin[x] = sin(rayc->angel_in_radian[x]) * 2000;
         rayc->dx[x] = rayc->x_cos[x];
         rayc->dy[x] = rayc->y_sin[x];
         if (abs(rayc->dx[x]) > abs(rayc->dy[x]))
@@ -88,7 +96,7 @@ void    draw_rays(t_rayc *rayc)
             rayc->pre_inc_y[x] = rayc->y_inc[x];
             rayc->y_inc[x] += rayc->dy[x] / rayc->steps[x];
             rayc->x_inc[x] += rayc->dx[x] / rayc->steps[x];
-            rayc->ray[x]++;
+            // rayc-->ray[x]++;
             if (rayc->map[(rayc->pp_y + (int)rayc->y_inc[x]) / 50]
                 [(rayc->pp_x + (int)rayc->x_inc[x]) / 50] == '1')
             {
@@ -104,6 +112,14 @@ void    draw_rays(t_rayc *rayc)
                 else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x]) / 50]
                     [(rayc->pp_x + (int)rayc->pre_inc_x[x] - 1) / 50] == '1')
                     rayc->dir[x] = 'W';
+                rayc->wallx = rayc->pp_x + (int)rayc->x_inc[x];
+                rayc->wally = rayc->pp_y + (int)rayc->y_inc[x];
+                // if (fabs(rayc->x_inc[x]) > fabs(rayc->y_inc[x]))
+                //     rayc->ray[x] = fabs(rayc->x_inc[x]);
+                // else
+                //     rayc->ray[x] = fabs(rayc->y_inc[x]);
+                rayc->ray[x] = distance(rayc->pp_x, rayc->pp_y, rayc->wallx, rayc->wally);
+                // printf("ray %d is %f\n", x, rayc->ray[x]);
                 break;
             }
         } 
@@ -115,7 +131,7 @@ void    draw_rays(t_rayc *rayc)
         rayc->ray[x - 1] = 0;
         x--;
     }
-    printf("======================\n=========================\n");
+    printf("======================\n=======================\n");
 }
 
 void    draw_img_line(t_rayc *rayc)
@@ -209,8 +225,8 @@ int player(int event, t_rayc *rayc)
     int x = 0;
     if (event == 119)
     {
-        rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 4;
-        rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 4;
+        rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 6;
+        rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 6;
         rayc->pp_x += (int)rayc->x_cos[160];
         rayc->pp_y += (int)rayc->y_sin[160];
         if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[160]) / 50]
@@ -305,8 +321,7 @@ int player(int event, t_rayc *rayc)
     }
     else if (event == 113)
         exit(1);
-    // printf("%d\n", event);
-    return (0);
+    // printf("%d\n", event);ab
 }
 
 int main(int ac, char **av)
@@ -314,8 +329,8 @@ int main(int ac, char **av)
     (void)ac;
     int x = 0;
     int y = 0;
-    int a = 49;
-    int b = 49;
+    int a = 50;
+    int b = 50;
     t_rayc rayc;
     char *tmp;
     char *str;
