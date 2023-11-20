@@ -19,7 +19,7 @@ void    the_casting(t_rayc *rayc)
     int color;
     int x = 0;
     int i;
-    double tan;
+    double distence;
     double wall;
     int colom = 1280 / 320;
     int inc = 0;
@@ -34,9 +34,9 @@ void    the_casting(t_rayc *rayc)
         y = x * colom;
         while (y < x * colom + colom)
         {
-            tan = 
-            wall = ((double)50 / rayc->ray[x]) * (double)600;
-            // printf("ray==%f\n", );
+            distence = rayc->ray[x] * cos(rayc->angel_in_radian[160] - rayc->angel_in_radian[x]);
+            wall = ((double)50 / distence) * (double)800;
+            // printf("ray====================[%f]\n", rayc->ray[x]);
             if (wall > 600)
                 wall = 600;
             if (rayc->dir[x] == 'W' || rayc->dir[x] == 'E')
@@ -118,7 +118,7 @@ void    draw_rays(t_rayc *rayc)
                 //     rayc->ray[x] = fabs(rayc->x_inc[x]);
                 // else
                 //     rayc->ray[x] = fabs(rayc->y_inc[x]);
-                rayc->ray[x] = distance(rayc->pp_x, rayc->pp_y, rayc->wallx, rayc->wally);
+                // rayc->ray[x] = distance(rayc->pp_x, rayc->pp_y, rayc->wallx, rayc->wally);
                 // printf("ray %d is %f\n", x, rayc->ray[x]);
                 break;
             }
@@ -244,8 +244,8 @@ int player(int event, t_rayc *rayc)
     }
     else if (event == 115)
     {
-        rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 4;
-        rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 4;
+        rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 6;
+        rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 6;
         rayc->pp_x -= (int)rayc->x_cos[160];
         rayc->pp_y -= (int)rayc->y_sin[160];
         if (rayc->map[(rayc->pp_y - (int)rayc->y_sin[160]) / 50]
@@ -264,8 +264,8 @@ int player(int event, t_rayc *rayc)
     else if (event == 100)
     {
         rayc->angel_in_radian[160] = (rayc->angel[160] + 90) * (3.141593 / 180);
-        rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 4;
-        rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 4;
+        rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 6;
+        rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 6;
         rayc->pp_x += (int)rayc->x_cos[160];
         rayc->pp_y += (int)rayc->y_sin[160];
         if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[160]) / 50]
@@ -283,8 +283,8 @@ int player(int event, t_rayc *rayc)
     else if (event == 97)
     {
             rayc->angel_in_radian[160] = (rayc->angel[160] - 90) * (3.141593 / 180);
-            rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 4;
-            rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 4;
+            rayc->x_cos[160] = cos(rayc->angel_in_radian[160]) * 6;
+            rayc->y_sin[160] = sin(rayc->angel_in_radian[160]) * 6;
             rayc->pp_x += (int)rayc->x_cos[160];
             rayc->pp_y += (int)rayc->y_sin[160];
         if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[160]) / 50]
@@ -303,7 +303,7 @@ int player(int event, t_rayc *rayc)
     {
         while (x < 320)
         {
-            rayc->angel[x] = rayc->angel[x] + 2;
+            rayc->angel[x] = rayc->angel[x] + 3;
             x++;
         }
         draw_player(rayc);
@@ -313,7 +313,7 @@ int player(int event, t_rayc *rayc)
     {
        while (x < 320)
         {
-            rayc->angel[x] = rayc->angel[x] - 2;
+            rayc->angel[x] = rayc->angel[x] - 3;
             x++;
         }
         draw_player(rayc);
