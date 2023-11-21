@@ -21,16 +21,17 @@ typedef struct rayc
     int     pp_y;
     int     wallx;
     int     wally;
-    double  angel[320];
-    char    dir[320];
-    double  pre_inc_x[320];
-    double  pre_inc_y[320];
-    double  angel_in_radian[320];
-    double x_inc[320], y_inc[320];
-    double steps[320];
-    double x_cos[320], y_sin[320];
-    double dx[320], dy[320];
-    double     ray[320];
+    int     ray_in_wall[800];
+    double  angel[800];
+    char    dir[800];
+    double  pre_inc_x[800];
+    double  pre_inc_y[800];
+    double  angel_in_radian[800];
+    double x_inc[800], y_inc[800];
+    double steps[800];
+    double x_cos[800], y_sin[800];
+    double dx[800], dy[800];
+    double     ray[800];
 } t_rayc;
 
 typedef struct	s_data {
@@ -39,6 +40,8 @@ typedef struct	s_data {
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
+    int     w;
+    int     h;
 }				t_data;
 
 int player(int event, t_rayc *rayc);
