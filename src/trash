@@ -142,3 +142,89 @@
     //     x = -1;
     //     y++;
     // }
+
+// void    draw_img_line(t_rayc *rayc)
+// {
+//     int x = 50;
+//     int y = 0;
+
+//     while (x < rayc->raw * 50)
+//     {
+//         while (y < rayc->colom * 50)
+//         {
+//             mlx_pixel_put(rayc->ptr, rayc->window, x, y, 0x000000);
+//             y++;
+//         }
+//         x += 50;
+//         y = 0;
+//     }
+//     x = 0;
+//     y = 50;
+//     while (y < rayc->colom * 50)
+//     {
+//         while (x < rayc->raw * 50)
+//         {
+//             mlx_pixel_put(rayc->ptr, rayc->window, x, y, 0x000000);
+//             x++;
+//         }
+//         x = 0;
+//         y += 50;
+//     }
+// }
+
+// void    draw_img_back(t_rayc *rayc)
+// {
+//     int x = 0;
+//     int y = 0;
+
+//     while (rayc->map[y])
+//     {
+//         x = 0;
+//         while (rayc->map[y][x])
+//         {
+//             if (rayc->map[y][x] == '1')
+//                 mlx_put_image_to_window(rayc->ptr,
+//                     rayc->window, rayc->img, x * 50, y * 50);
+//             else if (rayc->map[y][x] == '0')
+//                 mlx_put_image_to_window(rayc->ptr,
+//                     rayc->window, rayc->floor, x * 50, y * 50);
+//             x++;
+//         }
+//         y++;
+//     }
+// }
+
+
+// void    draw_player(t_rayc *rayc)
+// {
+//     int x, y;
+
+//     int flag = 0;
+
+//     x = 0;
+//     y = 0;
+//     // draw_img_back(rayc);
+//     // draw_img_line(rayc);
+//     if (rayc->map[rayc->pp_y / 50][rayc->pp_x /50] == '1')
+//     {
+//         while (rayc->pp_y < rayc->colom * 50)
+//         {
+//             while (rayc->pp_x < rayc->raw * 50)
+//             {
+//                 if (rayc->map[rayc->pp_y / 50][rayc->pp_x / 50] == '0')
+//                 {
+//                     flag = 1;
+//                     break;
+//                 }
+//                 rayc->pp_x += 50;
+//             }
+//             if (flag == 1)
+//                 break;
+//             rayc->pp_x = 50;
+//             rayc->pp_y += 50;
+//         }
+//         rayc->pp_x += 25;
+//     }
+//             // mlx_pixel_put(rayc->ptr, rayc->window,
+//             //     rayc->pp_x + x, rayc->pp_y + y, 0x0000FF00);
+// }

@@ -10,6 +10,9 @@ typedef struct rayc
 {
     char    **map;
     int     raw;
+    int     a;
+    int     b;
+    int     old_x;
     void    *floor;
     int     colom;
     void    *ptr;
@@ -45,3 +48,4 @@ typedef struct	s_data {
 }				t_data;
 
 int player(int event, t_rayc *rayc);
+
