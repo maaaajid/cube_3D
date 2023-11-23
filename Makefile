@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: majid <majid@student.42.fr>                +#+  +:+       +#+         #
+#    By: aelbouaa <aelbouaa@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/17 10:29:42 by lahamoun          #+#    #+#              #
-#    Updated: 2023/11/04 03:34:48 by majid            ###   ########.fr        #
+#    Updated: 2023/11/23 19:29:40 by aelbouaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC = cc
 NAME = cub3D
 LIBFT = libft.a
 LIBFT_DIR = ./libft
-
+CFLAGS = -fsanitize=address -g3
 INCLUDES = -I/usr/include -Imlx -I$(LIBFT_DIR)
 SRC_DIR = ./src/
 SRC_DIR2 = ./get_next_line/
