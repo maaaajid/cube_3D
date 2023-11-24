@@ -6,10 +6,11 @@
 #include"../get_next_line/get_next_line.h"
 #include"../minilibx-linux/mlx.h"
 
-#define WINDOW_WIDTH 1200.0
-#define WINDOW_HIEGHT 800.0
-#define RAYS 320.0
+#define WINDOW_WIDTH 800.0
+#define WINDOW_HIEGHT 600.0
+#define RAYS 800
 #define FOV 60
+
 
 
 
@@ -23,7 +24,7 @@ typedef struct	s_data {
     int     h;
 }				t_data;
 
-typedef struct rayc
+typedef struct s_rayc
 {
     char    **map;
     int     raw;
@@ -41,20 +42,31 @@ typedef struct rayc
     int     pp_y;
     int     wallx;
     int     wally;
-    int     ray_in_wall[800];
-    double  angel[800];
-    char    dir[800];
-    double  pre_inc_x[800];
-    double  pre_inc_y[800];
-    double  radian[800];
-    double x_inc[800], y_inc[800];
-    double steps[800];
-    double x_cos[800], y_sin[800];
-    double dx[800], dy[800];
-    double     ray[800];
+    int     ray_in_wall[RAYS];
+    double  angel[RAYS];
+    char    dir[RAYS];
+    double  pre_inc_x[RAYS];
+    double  pre_inc_y[RAYS];
+    double  radian[RAYS];
+    double x_inc[RAYS], y_inc[RAYS];
+    double steps[RAYS];
+    double x_cos[RAYS], y_sin[RAYS];
+    double dx[RAYS], dy[RAYS];
+    double     ray[RAYS];
     t_data  *data[5];
 } t_rayc;
 
+typedef struct txtr
+{
+    unsigned int color;
+    int i;
+    double distence;
+    double wall;
+    int colom;
+    int y;
+    int ws;
+    int inc;
+} t_txtr;
 
 int player(int event, t_rayc *rayc);
 

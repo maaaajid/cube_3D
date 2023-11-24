@@ -25,7 +25,7 @@ int     ft_close(int event)
         exit (1);
 }
 
-double    distance(double x1, double y1, double x2, double y2)
+double    dist(double x1, double y1, double x2, double y2)
 {
     return (sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)));
 }
@@ -58,77 +58,120 @@ unsigned int    get_color(t_rayc *rayc, double wall, int x, int y)
 
 }
 
+void    put_textures(t_rayc *rayc, t_txtr *txtr, int x)
+{
+    while (txtr->y < x * txtr->colom + txtr->colom)
+    {
+        txtr->distence = cos(rayc->radian[(int)WINDOW_WIDTH / 2] - rayc->radian[x]);
+        txtr->distence = rayc->ray[x] * txtr->distence;
+        txtr->wall = ((double)50 / txtr->distence) * WINDOW_HIEGHT;
+        txtr->i = (WINDOW_HIEGHT / 2) - (txtr->wall / 2);
+        if (txtr->i < 0)
+            txtr->i = 0;
+        txtr->ws = ((WINDOW_HIEGHT / 2) - (txtr->wall / 2));
+        while (txtr->inc < (int)txtr->wall && txtr->inc < WINDOW_HIEGHT)
+        {
+            txtr->color = get_color(rayc, txtr->wall, (txtr->inc + txtr->i) - txtr->ws, txtr->y);
+            my_mlx_pixel_put(rayc->data[0], txtr->inc + txtr->i, txtr->y, txtr->color);
+            txtr->inc++;
+        }
+        while (txtr->inc + txtr->i < WINDOW_HIEGHT)
+        {
+            my_mlx_pixel_put(rayc->data[0], txtr->inc + txtr->i, txtr->y, 0x808080);
+            txtr->inc++;
+        }
+        txtr->y++;
+        txtr->inc = 0;
+    }
+}
+
+
 void    the_wall(t_rayc *rayc)
 {   
-    unsigned int color;
     int x = 0;
-    int i;
-    double distence;
-    double wall;
-    int colom = WINDOW_WIDTH / RAYS;
-    int inc = 0;
-    int y = x * colom;
+    t_txtr txtr;
 
+    txtr.inc = 0;
+    txtr.colom = WINDOW_WIDTH / RAYS;
+    txtr.y = x * txtr.colom;
     rayc->data[0]->img = mlx_new_image(rayc->ptr, WINDOW_WIDTH, WINDOW_HIEGHT);
     rayc->data[0]->addr = mlx_get_data_addr(rayc->data[0]->img, &rayc->data[0]->bits_per_pixel,
                         &rayc->data[0]->line_length, &rayc->data[0]->endian);
     while (x < RAYS)
     {
-        y = x * colom;
-        while (y < x * colom + colom)
-        {
-            distence = rayc->ray[x] * cos(rayc->radian[WINDOW_WIDTH / 2] - rayc->radian[x]);
-            wall = ((double)50 / distence) * (double)600;
-            i = 300 - (wall / 2);
-            if (i < 0)
-                i = 0;
-            int ws = (300 - (wall / 2));
-            while (inc < (int)wall && inc < 600)
-            {
-                color = get_color(rayc, wall, (inc + i) - ws, y);
-                my_mlx_pixel_put(rayc->data[0], inc + i, y, color);
-                inc++;
-            }
-            while (inc + i < 600)
-            {
-                my_mlx_pixel_put(rayc->data[0], inc + i, y, 0x808080);
-                inc++;
-            }
-            y++;
-            inc = 0;
-        }
+        txtr.y = x * txtr.colom;
+        put_textures(rayc, &txtr, x);
         x++;
     }
     mlx_put_image_to_window(rayc->ptr, rayc->window, rayc->data[0]->img, 0, 0);
     mlx_destroy_image(rayc->ptr, rayc->data[0]->img);
+    while (x--)
+        rayc->ray[x - 1] = 0;
 }
+
+void    get_angel(t_rayc *rayc, int x)
+{
+    rayc->radian[x] = rayc->angel[x] * (3.141593 / 180);
+    rayc->x_cos[x] = cos(rayc->radian[x]) * 2000;
+    rayc->y_sin[x] = sin(rayc->radian[x]) * 2000;
+    rayc->dx[x] = rayc->x_cos[x];
+    rayc->dy[x] = rayc->y_sin[x];
+    if (abs(rayc->dx[x]) > abs(rayc->dy[x]))
+        rayc->steps[x] = abs(rayc->dx[x]);
+    else if (abs(rayc->dx[x]) < abs(rayc->dy[x]))
+        rayc->steps[x] = abs(rayc->dy[x]);
+    else
+    {
+        if ((int)rayc->dx[x] > (int)rayc->dy[x])
+            rayc->steps[x] = rayc->dx[x];
+        else if ((int)rayc->dx[x] < (int)rayc->dy[x])
+            rayc->steps[x] = rayc->dy[x];
+        else if (abs(rayc->dx[x]) == abs(rayc->dy[x]))
+            rayc->steps[x] = abs(rayc->dx[x]);
+    }
+    rayc->x_inc[x] = rayc->dx[x] / rayc->steps[x];
+    rayc->y_inc[x] = rayc->dy[x] / rayc->steps[x];
+}
+
+void    get_direction(t_rayc *rayc, int x)
+{
+    if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x] + 1) / 50]
+        [(rayc->pp_x + (int)rayc->pre_inc_x[x]) / 50] == '1')
+    {
+        rayc->dir[x] = 'S';
+        rayc->ray_in_wall[x] = rayc->wallx % 50;
+    }
+    else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x] - 1) / 50]
+        [(rayc->pp_x + (int)rayc->pre_inc_x[x]) / 50] == '1')
+    {
+        rayc->dir[x] = 'N';
+        rayc->ray_in_wall[x] = rayc->wallx % 50;
+    }
+    else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x]) / 50]
+        [(rayc->pp_x + (int)rayc->pre_inc_x[x] + 1) / 50] == '1')
+    {
+        rayc->dir[x] = 'E';
+        rayc->ray_in_wall[x] = rayc->wally % 50;
+    }
+    else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x]) / 50]
+        [(rayc->pp_x + (int)rayc->pre_inc_x[x] - 1) / 50] == '1')
+    {
+        rayc->dir[x] = 'W';
+        rayc->ray_in_wall[x] = rayc->wally % 50;
+    }
+}
+
 
 void    draw_rays(t_rayc *rayc)
 {
-    int x = 0;
-    while (x < 800)
+    int x;
+
+    x = -1;
+    while (++x < RAYS)
     {
-        rayc->angel_in_radian[x] = rayc->angel[x] * (3.141593 / 180);
-        rayc->x_cos[x] = cos(rayc->angel_in_radian[x]) * 2000;
-        rayc->y_sin[x] = sin(rayc->angel_in_radian[x]) * 2000;
-        rayc->dx[x] = rayc->x_cos[x];
-        rayc->dy[x] = rayc->y_sin[x];
-        if (abs(rayc->dx[x]) > abs(rayc->dy[x]))
-            rayc->steps[x] = abs(rayc->dx[x]);
-        else if (abs(rayc->dx[x]) < abs(rayc->dy[x]))
-            rayc->steps[x] = abs(rayc->dy[x]);
-        else
-        {
-            if ((int)rayc->dx[x] > (int)rayc->dy[x])
-                rayc->steps[x] = rayc->dx[x];
-            else if ((int)rayc->dx[x] < (int)rayc->dy[x])
-                rayc->steps[x] = rayc->dy[x];
-            else if (abs(rayc->dx[x]) == abs(rayc->dy[x]))
-                rayc->steps[x] = abs(rayc->dx[x]);
-        }
-        rayc->x_inc[x] = rayc->dx[x] / rayc->steps[x];
-        rayc->y_inc[x] = rayc->dy[x] / rayc->steps[x];
-        while (abs(rayc->y_inc[x]) < abs(rayc->dy[x]) || abs(rayc->x_inc[x]) < abs(rayc->dx[x]))
+        get_angel(rayc, x);
+        while (abs(rayc->y_inc[x]) < abs(rayc->dy[x])
+            || abs(rayc->x_inc[x]) < abs(rayc->dx[x]))
         {
             rayc->pre_inc_x[x] = rayc->x_inc[x];
             rayc->pre_inc_y[x] = rayc->y_inc[x];
@@ -139,137 +182,122 @@ void    draw_rays(t_rayc *rayc)
             {
                 rayc->wallx = rayc->pp_x + (int)rayc->x_inc[x];
                 rayc->wally = rayc->pp_y + (int)rayc->y_inc[x];
-                if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x] + 1) / 50]
-                    [(rayc->pp_x + (int)rayc->pre_inc_x[x]) / 50] == '1')
-                {
-                    rayc->dir[x] = 'S';
-                    rayc->ray_in_wall[x] = rayc->wallx % 50;
-                }
-                else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x] - 1) / 50]
-                    [(rayc->pp_x + (int)rayc->pre_inc_x[x]) / 50] == '1')
-                {
-                    rayc->dir[x] = 'N';
-                    rayc->ray_in_wall[x] = rayc->wallx % 50;
-                }
-                else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x]) / 50]
-                    [(rayc->pp_x + (int)rayc->pre_inc_x[x] + 1) / 50] == '1')
-                {
-                    rayc->dir[x] = 'E';
-                    rayc->ray_in_wall[x] = rayc->wally % 50;
-                }
-                else if (rayc->map[(rayc->pp_y + (int)rayc->pre_inc_y[x]) / 50]
-                    [(rayc->pp_x + (int)rayc->pre_inc_x[x] - 1) / 50] == '1')
-                {
-                    rayc->dir[x] = 'W';
-                    rayc->ray_in_wall[x] = rayc->wally % 50;
-                }
-                rayc->ray[x] = distance(rayc->pp_x, rayc->pp_y, rayc->wallx, rayc->wally);
+                get_direction(rayc, x);
                 break;
             }
-        } 
-
-        x++;
-        // printf("xx%d\n", x);
+        }
+        rayc->ray[x] = dist(rayc->pp_x, rayc->pp_y, rayc->wallx, rayc->wally);
     }
     the_wall(rayc);
-    printf("hamid\n");
-    while (x)
+}
+
+void    forward(t_rayc *rayc)
+{
+    rayc->x_cos[RAYS / 2] = cos(rayc->radian[RAYS / 2]) * 8;
+    rayc->y_sin[RAYS / 2] = sin(rayc->radian[RAYS / 2]) * 8;
+    rayc->pp_x += (int)rayc->x_cos[RAYS / 2];
+    rayc->pp_y += (int)rayc->y_sin[RAYS / 2];
+    if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[RAYS / 2]) / 50]
+        [(rayc->pp_x + (int)rayc->x_cos[RAYS / 2])/ 50] == '0')
+        draw_rays(rayc);
+    else
     {
-        rayc->ray[x - 1] = 0;
-        x--;
+        rayc->pp_x -= (int)rayc->x_cos[RAYS / 2];
+        rayc->pp_y -= (int)rayc->y_sin[RAYS / 2];
     }
+}
+
+void    backwards(t_rayc *rayc)
+{
+    rayc->x_cos[RAYS / 2] = cos(rayc->radian[RAYS / 2]) * 8;
+    rayc->y_sin[RAYS / 2] = sin(rayc->radian[RAYS / 2]) * 8;
+    rayc->pp_x -= (int)rayc->x_cos[RAYS / 2];
+    rayc->pp_y -= (int)rayc->y_sin[RAYS / 2];
+    if (rayc->map[(rayc->pp_y - (int)rayc->y_sin[RAYS / 2]) / 50]
+        [(rayc->pp_x - (int)rayc->x_cos[RAYS / 2])/ 50] == '0')
+        draw_rays(rayc);
+    else
+    {
+        rayc->pp_x += (int)rayc->x_cos[RAYS / 2];
+        rayc->pp_y += (int)rayc->y_sin[RAYS / 2];
+    }
+}
+void    move_right(t_rayc *rayc)
+{
+    rayc->radian[RAYS / 2] = (rayc->angel[RAYS / 2] + 90) * (3.141593 / 180);
+    rayc->x_cos[RAYS / 2] = cos(rayc->radian[RAYS / 2]) * 8;
+    rayc->y_sin[RAYS / 2] = sin(rayc->radian[RAYS / 2]) * 8;
+    rayc->pp_x += (int)rayc->x_cos[RAYS / 2];
+    rayc->pp_y += (int)rayc->y_sin[RAYS / 2];
+    if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[RAYS / 2]) / 50]
+        [(rayc->pp_x + (int)rayc->x_cos[RAYS / 2])/ 50] == '0')
+        draw_rays(rayc);
+    else
+    {
+        rayc->pp_x -= (int)rayc->x_cos[RAYS / 2];
+        rayc->pp_y -= (int)rayc->y_sin[RAYS / 2];
+    }
+}
+
+void    move_left(t_rayc *rayc)
+{
+    rayc->radian[RAYS / 2] = (rayc->angel[RAYS / 2] - 90) * (3.141593 / 180);
+    rayc->x_cos[RAYS / 2] = cos(rayc->radian[RAYS / 2]) * 8;
+    rayc->y_sin[RAYS / 2] = sin(rayc->radian[RAYS / 2]) * 8;
+    rayc->pp_x += (int)rayc->x_cos[RAYS / 2];
+    rayc->pp_y += (int)rayc->y_sin[RAYS / 2];
+    if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[RAYS / 2]) / 50]
+        [(rayc->pp_x + (int)rayc->x_cos[RAYS / 2])/ 50] == '0')
+        draw_rays(rayc); 
+    else
+    {
+        rayc->pp_x -= (int)rayc->x_cos[RAYS / 2];
+        rayc->pp_y -= (int)rayc->y_sin[RAYS / 2];
+    }
+}
+void    rotete_right(t_rayc *rayc)
+{
+    int x;
+
+    x = 0;
+    while (x < RAYS)
+    {
+        rayc->angel[x] = rayc->angel[x] + 5;
+        x++;
+    }
+    draw_rays(rayc);
+}
+
+void    rotete_left(t_rayc *rayc)
+{
+    int x;
+
+    x = 0;
+    while (x < RAYS)
+    {
+        rayc->angel[x] = rayc->angel[x] - 5;
+        x++;
+    }
+    draw_rays(rayc);
 }
 
 int player(int event, t_rayc *rayc)
 {
     int x = 0;
     if (event == 119)
-    {
-        rayc->x_cos[400] = cos(rayc->angel_in_radian[400]) * 4;
-        rayc->y_sin[400] = sin(rayc->angel_in_radian[400]) * 4;
-        rayc->pp_x += (int)rayc->x_cos[400];
-        rayc->pp_y += (int)rayc->y_sin[400];
-        if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[400]) / 50]
-            [(rayc->pp_x + (int)rayc->x_cos[400])/ 50] == '0')
-            draw_rays(rayc);
-        else
-        {
-            rayc->pp_x -= (int)rayc->x_cos[400];
-            rayc->pp_y -= (int)rayc->y_sin[400];
-        }
-
-    }
+        forward(rayc);
     else if (event == 115)
-    {
-        rayc->x_cos[400] = cos(rayc->angel_in_radian[400]) * 4;
-        rayc->y_sin[400] = sin(rayc->angel_in_radian[400]) * 4;
-        rayc->pp_x -= (int)rayc->x_cos[400];
-        rayc->pp_y -= (int)rayc->y_sin[400];
-        if (rayc->map[(rayc->pp_y - (int)rayc->y_sin[400]) / 50]
-            [(rayc->pp_x - (int)rayc->x_cos[400])/ 50] == '0')
-            draw_rays(rayc);
-        else
-        {
-            rayc->pp_x += (int)rayc->x_cos[400];
-            rayc->pp_y += (int)rayc->y_sin[400];
-        }
-    
-    }
+        backwards(rayc);
     else if (event == 100)
-    {
-        rayc->angel_in_radian[400] = (rayc->angel[400] + 90) * (3.141593 / 180);
-        rayc->x_cos[400] = cos(rayc->angel_in_radian[400]) * 4;
-        rayc->y_sin[400] = sin(rayc->angel_in_radian[400]) * 4;
-        rayc->pp_x += (int)rayc->x_cos[400];
-        rayc->pp_y += (int)rayc->y_sin[400];
-        if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[400]) / 50]
-            [(rayc->pp_x + (int)rayc->x_cos[400])/ 50] == '0')
-            draw_rays(rayc);
-        else
-        {
-            rayc->pp_x -= (int)rayc->x_cos[400];
-            rayc->pp_y -= (int)rayc->y_sin[400];
-        }
-    }
+        move_right(rayc);
     else if (event == 97)
-    {
-            rayc->angel_in_radian[400] = (rayc->angel[400] - 90) * (3.141593 / 180);
-            rayc->x_cos[400] = cos(rayc->angel_in_radian[400]) * 4;
-            rayc->y_sin[400] = sin(rayc->angel_in_radian[400]) * 4;
-            rayc->pp_x += (int)rayc->x_cos[400];
-            rayc->pp_y += (int)rayc->y_sin[400];
-        if (rayc->map[(rayc->pp_y + (int)rayc->y_sin[400]) / 50]
-            [(rayc->pp_x + (int)rayc->x_cos[400])/ 50] == '0')
-            draw_rays(rayc); 
-        else
-        {
-            rayc->pp_x -= (int)rayc->x_cos[400];
-            rayc->pp_y -= (int)rayc->y_sin[400];
-        }
-    }
-
+        move_left(rayc);
     else if (event == 65363)
-    {
-        while (x < 800)
-        {
-            rayc->angel[x] = rayc->angel[x] + 3;
-            x++;
-        }
-        draw_rays(rayc);
-    }
+        rotete_right(rayc);
     else if (event == 65361)
-    {
-       while (x < 800)
-        {
-            rayc->angel[x] = rayc->angel[x] - 3;
-            x++;
-        }
-        draw_rays(rayc);
-    }
+        rotete_left(rayc);
     else if (event == 65307)
         exit(1);
-    
-    // printf("%d\n", event);
 }
 int mouse_move(int x, int y, t_rayc *rayc)
 {
@@ -277,7 +305,7 @@ int mouse_move(int x, int y, t_rayc *rayc)
     int i = 0;
     mlx_mouse_get_pos(rayc->ptr, rayc->window, &rayc->a, &rayc->b);
     if (rayc->a >= 700 || rayc->a <= 100)
-        mlx_mouse_move(rayc->ptr, rayc->window, 400, 300);
+        mlx_mouse_move(rayc->ptr, rayc->window, RAYS / 2, 300);
     if (x > rayc->old_x)
     {
         if (x >= rayc->old_x + 10)
@@ -334,17 +362,17 @@ int main(int ac, char **av)
         x++;
     }
     read_textures(rayc);
-    rayc->window = mlx_new_window(rayc->ptr, 800, 600, "cub3d");
-    double ab = (double)60 / (double)800;
+    rayc->window = mlx_new_window(rayc->ptr, WINDOW_WIDTH, WINDOW_HIEGHT, "cub3d");
+    double ab = (double)FOV / (double)RAYS;
     x = 0;
-    while (x < 800)
+    while (x < RAYS)
     {
         rayc->angel[x] = 60 + ab;
         rayc->ray[x] = 0;
-        ab += (double)60 / (double)800;
+        ab += (double)FOV / (double)RAYS;
         x++;
     }
-    rayc->old_x = 400;
+    rayc->old_x = RAYS / 2;
     rayc->pp_x = rayc->raw * 25;
     rayc->pp_y = rayc->colom * 25;
     draw_rays(rayc);
@@ -353,5 +381,4 @@ int main(int ac, char **av)
     mlx_hook(rayc->window, 17, 0, &ft_close, NULL);
     // mlx_hook(rayc->window, 6, 1L << 6, &mouse_move, rayc);
     mlx_loop(rayc->ptr);
-
 }
