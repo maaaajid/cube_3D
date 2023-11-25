@@ -3,22 +3,30 @@
 
 void    read_textures(t_rayc *rayc)
 {
-    rayc->data[0]->img = mlx_new_image(rayc->ptr, 800, 600);
+
+    rayc->data[0]->img = mlx_new_image(rayc->ptr, WINDOW_WIDTH, WINDOW_HIEGHT);
+    rayc->data[1]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/ddd.xpm", &rayc->data[1]->w, &rayc->data[1]->h);
+    rayc->data[2]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/door.xpm", &rayc->data[2]->w, &rayc->data[2]->h);
+    rayc->data[3]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/yellow.xpm", &rayc->data[3]->w, &rayc->data[3]->h);
+    rayc->data[4]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/wall4.xpm", &rayc->data[4]->w, &rayc->data[4]->h);
+    if (!rayc->data[0]->img || !rayc->data[1]->img || !rayc->data[2]->img
+        || !rayc->data[4]->img || !rayc->data[3]->img)
+    {
+        printf("missing one or more texture\n");
+        exit (1);
+    }
     rayc->data[0]->addr = mlx_get_data_addr(rayc->data[0]->img, &rayc->data[0]->bits_per_pixel,
                         &rayc->data[0]->line_length, &rayc->data[0]->endian);
-    rayc->data[1]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/wall3.xpm", &rayc->data[1]->w, &rayc->data[1]->h);
     rayc->data[1]->addr = mlx_get_data_addr(rayc->data[1]->img, &rayc->data[1]->bits_per_pixel,
                         &rayc->data[1]->line_length, &rayc->data[1]->endian);
-    rayc->data[2]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/wall4.xpm", &rayc->data[2]->w, &rayc->data[2]->h);
     rayc->data[2]->addr = mlx_get_data_addr(rayc->data[2]->img, &rayc->data[2]->bits_per_pixel,
                         &rayc->data[2]->line_length, &rayc->data[2]->endian);
-    rayc->data[3]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/wall.xpm", &rayc->data[3]->w, &rayc->data[3]->h);
     rayc->data[3]->addr = mlx_get_data_addr(rayc->data[3]->img, &rayc->data[3]->bits_per_pixel,
                         &rayc->data[3]->line_length, &rayc->data[3]->endian);
-    rayc->data[4]->img = mlx_xpm_file_to_image(rayc->ptr, "./src/new.xpm", &rayc->data[4]->w, &rayc->data[4]->h);
     rayc->data[4]->addr = mlx_get_data_addr(rayc->data[4]->img, &rayc->data[4]->bits_per_pixel,
                         &rayc->data[4]->line_length, &rayc->data[4]->endian);
 }
+
 
 int     ft_close(int event)
 {
@@ -51,18 +59,30 @@ unsigned int    get_color(t_rayc *rayc, double wall, int x, int y)
     unsigned int color;
     double y_tex;
     double x_tex;
-    y_tex = ((double)rayc->ray_in_wall[y] * rayc->data[1]->w) / 50.0;
-    x_tex = ((double)x * rayc->data[2]->h ) / wall;
-    color = my_mlx_pixel_get(rayc->data[2], x_tex, y_tex);
+    y_tex = ((double)rayc->ray_in_wall[y] * rayc->data[rayc->dir_tex]->w) / 50.0;
+    x_tex = ((double)x * rayc->data[rayc->dir_tex]->h ) / wall;
+    color = my_mlx_pixel_get(rayc->data[rayc->dir_tex], x_tex, y_tex);
     return (color);
 
+}
+
+void    get_wich_textures(t_rayc *rayc, int x)
+{
+    if (rayc->dir[x] == 'S')
+        rayc->dir_tex = 1;
+    else if (rayc->dir[x] == 'N')
+        rayc->dir_tex = 2;
+    else if (rayc->dir[x] == 'E')
+        rayc->dir_tex = 3;
+    else if (rayc->dir[x] == 'W')
+        rayc->dir_tex = 4;
 }
 
 void    put_textures(t_rayc *rayc, t_txtr *txtr, int x)
 {
     while (txtr->y < x * txtr->colom + txtr->colom)
     {
-        txtr->distence = cos(rayc->radian[(int)WINDOW_WIDTH / 2] - rayc->radian[x]);
+        txtr->distence = cos(rayc->radian[RAYS / 2] - rayc->radian[x]);
         txtr->distence = rayc->ray[x] * txtr->distence;
         txtr->wall = ((double)50 / txtr->distence) * WINDOW_HIEGHT;
         txtr->i = (WINDOW_HIEGHT / 2) - (txtr->wall / 2);
@@ -71,7 +91,8 @@ void    put_textures(t_rayc *rayc, t_txtr *txtr, int x)
         txtr->ws = ((WINDOW_HIEGHT / 2) - (txtr->wall / 2));
         while (txtr->inc < (int)txtr->wall && txtr->inc < WINDOW_HIEGHT)
         {
-            txtr->color = get_color(rayc, txtr->wall, (txtr->inc + txtr->i) - txtr->ws, txtr->y);
+            get_wich_textures(rayc, x);
+            txtr->color = get_color(rayc, txtr->wall, (txtr->inc + txtr->i) - txtr->ws, x);
             my_mlx_pixel_put(rayc->data[0], txtr->inc + txtr->i, txtr->y, txtr->color);
             txtr->inc++;
         }
@@ -92,12 +113,12 @@ void    the_wall(t_rayc *rayc)
     t_txtr txtr;
 
     txtr.inc = 0;
-    txtr.colom = WINDOW_WIDTH / RAYS;
+    txtr.colom = WINDOW_WIDTH / (double)RAYS;
     txtr.y = x * txtr.colom;
     rayc->data[0]->img = mlx_new_image(rayc->ptr, WINDOW_WIDTH, WINDOW_HIEGHT);
     rayc->data[0]->addr = mlx_get_data_addr(rayc->data[0]->img, &rayc->data[0]->bits_per_pixel,
                         &rayc->data[0]->line_length, &rayc->data[0]->endian);
-    while (x < RAYS)
+    while (x < (double)RAYS)
     {
         txtr.y = x * txtr.colom;
         put_textures(rayc, &txtr, x);
@@ -191,6 +212,32 @@ void    draw_rays(t_rayc *rayc)
     the_wall(rayc);
 }
 
+void    sliding(t_rayc *rayc)
+{
+    if (rayc->map[(rayc->pp_y + ((int)rayc->y_sin[RAYS / 2])) / 50]
+    [rayc->pp_x/ 50] == '0' 
+    && rayc->x_cos[RAYS / 2] < 4 && rayc->x_cos[RAYS / 2] > -4)
+    {
+        rayc->pp_y += ((int)rayc->y_sin[RAYS / 2] / 2);
+        rayc->pp_x -= (int)rayc->x_cos[RAYS / 2];
+        draw_rays(rayc);
+    }
+    else if (rayc->map[rayc->pp_y / 50]
+    [(rayc->pp_x + ((int)rayc->x_cos[RAYS / 2]))/ 50] == '0' 
+    && rayc->y_sin[RAYS / 2] < 4 && rayc->y_sin[RAYS / 2] > -4)
+    {
+        rayc->pp_x += ((int)rayc->x_cos[RAYS / 2] / 2);
+        rayc->pp_y -= (int)rayc->y_sin[RAYS / 2];
+        draw_rays(rayc);
+    }
+    else
+    {
+        rayc->pp_x -= (int)rayc->x_cos[RAYS / 2];
+        rayc->pp_y -= (int)rayc->y_sin[RAYS / 2];
+    }
+}
+
+
 void    forward(t_rayc *rayc)
 {
     rayc->x_cos[RAYS / 2] = cos(rayc->radian[RAYS / 2]) * 8;
@@ -201,10 +248,7 @@ void    forward(t_rayc *rayc)
         [(rayc->pp_x + (int)rayc->x_cos[RAYS / 2])/ 50] == '0')
         draw_rays(rayc);
     else
-    {
-        rayc->pp_x -= (int)rayc->x_cos[RAYS / 2];
-        rayc->pp_y -= (int)rayc->y_sin[RAYS / 2];
-    }
+        sliding(rayc);
 }
 
 void    backwards(t_rayc *rayc)
@@ -309,7 +353,7 @@ int mouse_move(int x, int y, t_rayc *rayc)
     if (x > rayc->old_x)
     {
         if (x >= rayc->old_x + 10)
-            while (i < 800)
+            while (i < RAYS)
             {
                 rayc->angel[i] += 0.8;
                 i++;
@@ -317,7 +361,7 @@ int mouse_move(int x, int y, t_rayc *rayc)
     }
     else
         if (x <= rayc->old_x - 10)
-            while (i < 800)
+            while (i < RAYS)
             {
                 rayc->angel[i] -= 0.8;
                 i++;
@@ -372,7 +416,7 @@ int main(int ac, char **av)
         ab += (double)FOV / (double)RAYS;
         x++;
     }
-    rayc->old_x = RAYS / 2;
+    // rayc->old_x = RAYS / 2;
     rayc->pp_x = rayc->raw * 25;
     rayc->pp_y = rayc->colom * 25;
     draw_rays(rayc);

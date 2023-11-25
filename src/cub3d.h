@@ -6,9 +6,9 @@
 #include"../get_next_line/get_next_line.h"
 #include"../minilibx-linux/mlx.h"
 
-#define WINDOW_WIDTH 800.0
-#define WINDOW_HIEGHT 600.0
-#define RAYS 800
+#define WINDOW_WIDTH 1600.0
+#define WINDOW_HIEGHT 900.0
+#define RAYS 20
 #define FOV 60
 
 
@@ -27,6 +27,7 @@ typedef struct	s_data {
 typedef struct s_rayc
 {
     char    **map;
+    int     dir_tex;
     int     raw;
     int     a;
     int     b;
@@ -62,7 +63,7 @@ typedef struct txtr
     int i;
     double distence;
     double wall;
-    int colom;
+    float colom;
     int y;
     int ws;
     int inc;
