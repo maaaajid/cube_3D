@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymenyoub <ymenyoub@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/05 04:24:40 by ymenyoub          #+#    #+#             */
-/*   Updated: 2023/11/13 00:50:56 by ymenyoub         ###   ########.fr       */
+/*   Created: 2022/11/19 04:01:58 by ymenyoub          #+#    #+#             */
+/*   Updated: 2023/11/11 02:16:08 by ymenyoub         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlenn(char *s)
 {
@@ -73,7 +73,7 @@ int	ft_strchrr(char *s)
 	int	len;
 
 	i = 0;
-	len = ft_strlenn(s);
+	len = ft_strlen(s);
 	while (i <= len)
 	{
 		if (s[i] == '\n')

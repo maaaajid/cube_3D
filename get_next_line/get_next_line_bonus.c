@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ymenyoub <ymenyoub@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/11/05 04:23:52 by ymenyoub          #+#    #+#             */
-/*   Updated: 2023/11/11 02:14:58 by ymenyoub         ###   ########.fr       */
+/*   Created: 2022/11/19 04:01:25 by ymenyoub          #+#    #+#             */
+/*   Updated: 2023/11/11 02:15:41 by ymenyoub         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*ft_add_join(int fd, char *saved)
 {
@@ -75,7 +75,7 @@ char	*ft_rest(char *save)
 	i = 0;
 	while (save[i] && save[i] != '\n')
 		i++;
-	if (!save[i])
+	if (!save[i] || !save[i + 1])
 	{
 		free (save);
 		return (NULL);
@@ -98,14 +98,14 @@ char	*ft_rest(char *save)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*save;
+	static char	*save[OPEN_MAX];
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > OPEN_MAX)
 		return (NULL);
-	save = ft_add_join(fd, save);
-	if (!save)
+	save[fd] = ft_add_join(fd, save[fd]);
+	if (!save[fd])
 		return (NULL);
-	line = ft_line(save);
-	save = ft_rest(save);
+	line = ft_line(save[fd]);
+	save[fd] = ft_rest(save[fd]);
 	return (line);
 }
